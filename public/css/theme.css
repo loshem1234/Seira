@@ -1,35 +1,82 @@
 /* Seira — Sanctum Sanctorum palette, violet variant.
    Distinct from Arche's dark-gold house style: here the ground is a deep
    violet rather than near-black, and gold is reserved for text/accents
-   rather than structure, so the two systems read as kin, not twins. */
+   rather than structure. The signature element is a slow rise of embers —
+   the visual analogue of anagogic ascent, Article 7's epistrophē made
+   ambient rather than illustrated literally. */
 
 :root {
-    --seira-void: #14091f;
-    --seira-violet-deep: #1f0f30;
-    --seira-violet: #2c1745;
-    --seira-violet-light: #402060;
+    --seira-void: #0a0414;
+    --seira-violet-deep: #170a2b;
+    --seira-violet: #281149;
+    --seira-violet-light: #45207a;
     --seira-gold: #d8b657;
-    --seira-gold-bright: #f0d488;
+    --seira-gold-bright: #f4d98a;
     --seira-gold-dim: #a68a45;
-    --seira-text: #e8dfc8;
-    --seira-text-dim: #b8ac93;
-    --seira-border: #4a2d6b;
-    --seira-danger: #b85c5c;
+    --seira-ember: #ff9d52;
+    --seira-ember-dim: #c9713a;
+    --seira-text: #ece2cf;
+    --seira-text-dim: #b3a68e;
+    --seira-border: #4d2680;
+    --seira-danger: #c06868;
     --seira-ok: #7fae6a;
 }
 
 * { box-sizing: border-box; }
 
 body {
-    background: radial-gradient(ellipse at top, var(--seira-violet-deep), var(--seira-void) 70%);
+    background: radial-gradient(ellipse at top, var(--seira-violet-deep), var(--seira-void) 75%);
     color: var(--seira-text);
     font-family: 'DejaVu Serif', Georgia, 'Times New Roman', serif;
     margin: 0;
     min-height: 100vh;
+    position: relative;
+}
+
+/* Signature element: embers rising from the base of the viewport, fixed
+   behind all content. Restrained — this is the one place motion is used
+   deliberately; nothing else on the page animates. */
+.embers {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+.ember {
+    position: absolute;
+    bottom: -10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--seira-ember), var(--seira-ember-dim) 70%, transparent);
+    box-shadow: 0 0 6px 1px rgba(255, 157, 82, 0.5);
+    opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .ember {
+        animation-name: ember-rise;
+        animation-timing-function: ease-out;
+        animation-iteration-count: infinite;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ember {
+        bottom: 6vh;
+        opacity: 0.25;
+    }
+}
+@keyframes ember-rise {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    8%   { opacity: 0.85; }
+    50%  { transform: translateY(-48vh) translateX(6px); opacity: 0.6; }
+    100% { transform: translateY(-95vh) translateX(-4px); opacity: 0; }
 }
 
 a { color: var(--seira-gold); text-decoration: none; }
 a:hover { color: var(--seira-gold-bright); text-decoration: underline; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--seira-gold-bright);
+    outline-offset: 2px;
+}
 
 header.seira-header {
     background: linear-gradient(180deg, var(--seira-violet), var(--seira-violet-deep));
@@ -38,15 +85,18 @@ header.seira-header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
+    position: relative;
+    z-index: 1;
 }
 
 header.seira-header h1 {
     font-family: 'DejaVu Serif', serif;
     color: var(--seira-gold-bright);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     font-size: 1.6rem;
     margin: 0;
     font-variant: small-caps;
+    text-shadow: 0 0 12px rgba(244, 217, 138, 0.25);
 }
 
 nav.seira-nav {
@@ -64,10 +114,13 @@ main {
     max-width: 1000px;
     margin: 0 auto;
     padding: 2rem;
+    position: relative;
+    z-index: 1;
 }
 
 .seira-card {
-    background: rgba(44, 23, 69, 0.55);
+    background: rgba(40, 17, 73, 0.5);
+    backdrop-filter: blur(2px);
     border: 1px solid var(--seira-border);
     border-radius: 6px;
     padding: 1.5rem;
@@ -124,7 +177,7 @@ table.seira-table th {
 .health-metric {
     text-align: center;
     padding: 1rem;
-    background: rgba(20, 9, 31, 0.5);
+    background: rgba(10, 4, 20, 0.5);
     border-radius: 4px;
     border: 1px solid var(--seira-border);
 }
@@ -164,15 +217,136 @@ table.seira-table th {
     padding: 0.2rem 0.6rem;
     border: 1px solid var(--seira-border);
     border-radius: 4px;
-    background: rgba(64, 32, 96, 0.3);
+    background: rgba(69, 32, 122, 0.3);
 }
 .instrument-node.retired { opacity: 0.5; text-decoration: line-through; }
 
 .banner-warning {
-    background: rgba(184, 92, 92, 0.15);
+    background: rgba(192, 104, 104, 0.15);
     border: 1px solid var(--seira-danger);
     color: var(--seira-text);
     padding: 0.75rem 1rem;
     border-radius: 4px;
     margin-bottom: 1.5rem;
 }
+
+/* Genesis page */
+.genesis-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+.genesis-main {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    padding: 2rem;
+}
+.genesis-card { text-align: left; }
+.genesis-title {
+    font-variant: small-caps;
+    letter-spacing: 0.15em;
+    color: var(--seira-gold-bright);
+    font-size: 2rem;
+    margin: 0 0 0.5rem;
+    text-align: center;
+    text-shadow: 0 0 16px rgba(244, 217, 138, 0.3);
+}
+.genesis-sub {
+    color: var(--seira-text-dim);
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+.genesis-form { display: flex; flex-direction: column; gap: 1.25rem; }
+.genesis-form label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--seira-gold-dim);
+    margin-bottom: 0.4rem;
+    display: block;
+}
+.genesis-form input, .genesis-form textarea {
+    width: 100%;
+    background: rgba(10, 4, 20, 0.6);
+    border: 1px solid var(--seira-border);
+    border-radius: 4px;
+    padding: 0.6rem 0.75rem;
+    color: var(--seira-text);
+    font-family: inherit;
+    font-size: 1rem;
+}
+.genesis-form input:focus, .genesis-form textarea:focus {
+    border-color: var(--seira-gold-dim);
+}
+.genesis-submit {
+    background: linear-gradient(180deg, var(--seira-gold), var(--seira-gold-dim));
+    color: var(--seira-void);
+    border: none;
+    border-radius: 4px;
+    padding: 0.75rem;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+}
+.genesis-submit:hover { filter: brightness(1.1); }
+
+/* Chat page */
+.chat-card { display: flex; flex-direction: column; }
+.chat-log {
+    height: 420px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(10, 4, 20, 0.4);
+    border-radius: 4px;
+    border: 1px solid var(--seira-border);
+    margin-bottom: 1rem;
+}
+.chat-message {
+    max-width: 75%;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+.chat-user {
+    align-self: flex-end;
+    background: var(--seira-violet-light);
+    border: 1px solid var(--seira-border);
+}
+.chat-seira {
+    align-self: flex-start;
+    background: rgba(216, 182, 87, 0.08);
+    border: 1px solid var(--seira-gold-dim);
+    font-style: italic;
+}
+.chat-form { display: flex; gap: 0.75rem; }
+.chat-form input {
+    flex: 1;
+    background: rgba(10, 4, 20, 0.6);
+    border: 1px solid var(--seira-border);
+    border-radius: 4px;
+    padding: 0.6rem 0.75rem;
+    color: var(--seira-text);
+    font-family: inherit;
+    font-size: 1rem;
+}
+.chat-form button {
+    background: linear-gradient(180deg, var(--seira-gold), var(--seira-gold-dim));
+    color: var(--seira-void);
+    border: none;
+    border-radius: 4px;
+    padding: 0.6rem 1.25rem;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+.chat-form button:hover { filter: brightness(1.1); }
