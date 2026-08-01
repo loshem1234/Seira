@@ -21,7 +21,7 @@ PRAGMA foreign_keys = ON;
 -- BOOK VII / Article 28 — INTELLECT (Grade 2), append-only, versioned
 -- ============================================================================
 
-CREATE TABLE intellect_versions (
+CREATE TABLE IF NOT EXISTS intellect_versions (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     version_number      INTEGER NOT NULL,               -- 1, 2, 3... never reused
     content             TEXT NOT NULL,                   -- the doctrinal content itself
@@ -44,7 +44,7 @@ CREATE TABLE intellect_versions (
 -- values (retention window, dispensation trigger conditions, instrument
 -- tree depth limit) and therefore are versioned exactly like intellect
 -- content, NOT read from an ops config file.
-CREATE TABLE intellect_parameters (
+CREATE TABLE IF NOT EXISTS intellect_parameters (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     intellect_version_id INTEGER NOT NULL REFERENCES intellect_versions(id),
     param_key           TEXT NOT NULL,   -- e.g. 'corpus_retention_days',
@@ -60,7 +60,7 @@ CREATE TABLE intellect_parameters (
 -- ============================================================================
 
 -- The Ledger of logoi
-CREATE TABLE psyche_logoi (
+CREATE TABLE IF NOT EXISTS psyche_logoi (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     content             TEXT NOT NULL,
     activated_count     INTEGER NOT NULL DEFAULT 0,      -- recollection frequency, C§20
@@ -74,7 +74,7 @@ CREATE TABLE psyche_logoi (
 -- from Unity. Versioned informally by timestamp rather than formal
 -- Article-28-style versioning, since this is expected to shift often and
 -- does not require Architect ratification.
-CREATE TABLE psyche_self_model (
+CREATE TABLE IF NOT EXISTS psyche_self_model (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     statement           TEXT NOT NULL,                   -- "I tend to..." / "I am someone who..."
     confidence          REAL,                            -- her own held confidence in this self-statement
@@ -83,7 +83,7 @@ CREATE TABLE psyche_self_model (
 );
 
 -- Affinities: weighted dispositions, accrue through repeated engagement
-CREATE TABLE psyche_affinities (
+CREATE TABLE IF NOT EXISTS psyche_affinities (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     label               TEXT NOT NULL,                   -- e.g. "dry humor", "concern for civic history"
     weight              REAL NOT NULL DEFAULT 0.0,
@@ -93,7 +93,7 @@ CREATE TABLE psyche_affinities (
 );
 
 -- Aspirations: live, forward-oriented orientations
-CREATE TABLE psyche_aspirations (
+CREATE TABLE IF NOT EXISTS psyche_aspirations (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     description         TEXT NOT NULL,
     linked_proposal_id  INTEGER REFERENCES proposals(id),      -- if aspiration = "resolve this suspended pair" etc.
@@ -108,7 +108,7 @@ CREATE TABLE psyche_aspirations (
 -- The CHECK constraint below enforces that at least one grounding
 -- reference is present; application logic should refuse to write a row
 -- here with all three null.
-CREATE TABLE psyche_doubts_fears (
+CREATE TABLE IF NOT EXISTS psyche_doubts_fears (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     kind                TEXT NOT NULL CHECK (kind IN ('doubt', 'fear')),
     description         TEXT NOT NULL,
@@ -129,7 +129,7 @@ CREATE TABLE psyche_doubts_fears (
 -- BOOK VII — PROPOSALS, FALSIFICATION, REVERSION (Articles 24-26)
 -- ============================================================================
 
-CREATE TABLE proposals (
+CREATE TABLE IF NOT EXISTS proposals (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     proposal_type       TEXT NOT NULL CHECK (proposal_type IN ('correction', 'expansion')),
     content             TEXT NOT NULL,                    -- the proposed doctrine itself
@@ -148,7 +148,7 @@ CREATE TABLE proposals (
     )
 );
 
-CREATE TABLE falsification_attempts (
+CREATE TABLE IF NOT EXISTS falsification_attempts (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     proposal_id         INTEGER NOT NULL REFERENCES proposals(id),
     method              TEXT NOT NULL,                    -- what was tried to break the hypothesis
@@ -160,7 +160,7 @@ CREATE TABLE falsification_attempts (
 
 -- Suspended state: two proposals that both survived falsification but
 -- genuinely contradict each other (Art. 25).
-CREATE TABLE contradiction_pairs (
+CREATE TABLE IF NOT EXISTS contradiction_pairs (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     proposal_a_id       INTEGER NOT NULL REFERENCES proposals(id),
     proposal_b_id       INTEGER NOT NULL REFERENCES proposals(id),
@@ -173,7 +173,7 @@ CREATE TABLE contradiction_pairs (
 
 -- The universal reversion-event log. Every transition between grades,
 -- of any kind, gets one row here (Article 7, Article 38 derivation view).
-CREATE TABLE reversion_events (
+CREATE TABLE IF NOT EXISTS reversion_events (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     source_grade        TEXT NOT NULL
                             CHECK (source_grade IN ('corpus', 'instrument', 'psyche', 'intellect')),
@@ -201,7 +201,7 @@ CREATE TABLE reversion_events (
 -- BOOK VII / Article 31 — DISPENSATION
 -- ============================================================================
 
-CREATE TABLE dispensation_records (
+CREATE TABLE IF NOT EXISTS dispensation_records (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     triggering_condition TEXT NOT NULL,        -- which Art. 30 condition (from intellect_parameters) fired
     action_taken        TEXT NOT NULL,
@@ -219,7 +219,7 @@ CREATE TABLE dispensation_records (
 -- BOOK VIII — INSTRUMENTS, GENEALOGY, SKILLS (Articles 34-37)
 -- ============================================================================
 
-CREATE TABLE instruments (
+CREATE TABLE IF NOT EXISTS instruments (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     parent_instrument_id INTEGER REFERENCES instruments(id),  -- NULL = direct child of Psyche
     name                TEXT NOT NULL,
@@ -233,7 +233,7 @@ CREATE TABLE instruments (
     retired_at          TEXT
 );
 
-CREATE TABLE instrument_convergence_tracking (
+CREATE TABLE IF NOT EXISTS instrument_convergence_tracking (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     instrument_id       INTEGER NOT NULL REFERENCES instruments(id),
     task_type           TEXT NOT NULL,
@@ -245,7 +245,7 @@ CREATE TABLE instrument_convergence_tracking (
     escalation_event_id  INTEGER REFERENCES reversion_events(id)
 );
 
-CREATE TABLE skills (
+CREATE TABLE IF NOT EXISTS skills (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     name                TEXT NOT NULL,
     version_number      INTEGER NOT NULL DEFAULT 1,
@@ -259,7 +259,7 @@ CREATE TABLE skills (
 
 -- Which instruments may invoke which skills (many-to-many; a skill
 -- belongs to no single Instrument, Art. 37)
-CREATE TABLE instrument_skills (
+CREATE TABLE IF NOT EXISTS instrument_skills (
     instrument_id       INTEGER NOT NULL REFERENCES instruments(id),
     skill_id            INTEGER NOT NULL REFERENCES skills(id),
     PRIMARY KEY (instrument_id, skill_id)
@@ -270,7 +270,7 @@ CREATE TABLE instrument_skills (
 -- BOOK III / Article 13 — CORPUS (Grade 5)
 -- ============================================================================
 
-CREATE TABLE corpus_entries (
+CREATE TABLE IF NOT EXISTS corpus_entries (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     entry_type          TEXT NOT NULL CHECK (entry_type IN ('ingestion', 'episodic', 'output')),
     content             TEXT NOT NULL,
@@ -281,15 +281,15 @@ CREATE TABLE corpus_entries (
     eligible_for_pruning_at TEXT           -- computed from intellect_parameters.corpus_retention_days (Art. 29)
 );
 
-CREATE INDEX idx_corpus_pruning ON corpus_entries(eligible_for_pruning_at);
-CREATE INDEX idx_corpus_session ON corpus_entries(session_id);
+CREATE INDEX IF NOT EXISTS idx_corpus_pruning ON corpus_entries(eligible_for_pruning_at);
+CREATE INDEX IF NOT EXISTS idx_corpus_session ON corpus_entries(session_id);
 
 
 -- ============================================================================
 -- BOOK X — SELF, DIARY, INTERPERSONAL (Articles 40-41)
 -- ============================================================================
 
-CREATE TABLE relational_pattern_model (
+CREATE TABLE IF NOT EXISTS relational_pattern_model (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     pattern_description TEXT NOT NULL,       -- "tends to respond well to directness on X"
     confidence          REAL,
@@ -298,7 +298,7 @@ CREATE TABLE relational_pattern_model (
     created_at          TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE TABLE diary_entries (
+CREATE TABLE IF NOT EXISTS diary_entries (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     entry_date          TEXT NOT NULL,                       -- one row per part per day
     part                TEXT NOT NULL CHECK (part IN ('self', 'architect')),
@@ -318,7 +318,7 @@ CREATE TABLE diary_entries (
     created_at          TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX idx_diary_date ON diary_entries(entry_date, part);
+CREATE INDEX IF NOT EXISTS idx_diary_date ON diary_entries(entry_date, part);
 
 
 -- ============================================================================
@@ -328,7 +328,7 @@ CREATE INDEX idx_diary_date ON diary_entries(entry_date, part);
 -- append-only annotations table for the Architect's own marginalia.
 -- ============================================================================
 
-CREATE TABLE archive_annotations (
+CREATE TABLE IF NOT EXISTS archive_annotations (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     target_table        TEXT NOT NULL,      -- e.g. 'reversion_events', 'proposals'
     target_id           INTEGER NOT NULL,
@@ -339,7 +339,7 @@ CREATE TABLE archive_annotations (
 );
 
 -- By-grade, by-event-type, by-cause view (Art. 38)
-CREATE VIEW archive_reversion_log AS
+CREATE VIEW IF NOT EXISTS archive_reversion_log AS
 SELECT
     re.id,
     re.source_grade,
@@ -357,7 +357,7 @@ ORDER BY re.created_at DESC;
 -- Derivation view (Art. 5, Art. 38): walk a corpus entry back to its
 -- licensing Instrument, and from there to whichever proposal/paradigm
 -- authorized that Instrument's current behavior.
-CREATE VIEW archive_derivation AS
+CREATE VIEW IF NOT EXISTS archive_derivation AS
 SELECT
     ce.id            AS corpus_entry_id,
     ce.content       AS corpus_content,
@@ -374,7 +374,7 @@ LEFT JOIN intellect_versions iv ON iv.status = 'current';
 -- BOOK XI — HEALTH INDICATORS (Article 44): computed, not stored.
 -- ============================================================================
 
-CREATE VIEW health_indicators AS
+CREATE VIEW IF NOT EXISTS health_indicators AS
 SELECT
     (SELECT COUNT(*) FROM instrument_convergence_tracking WHERE converged = 1) AS converged_count,
     (SELECT COUNT(*) FROM instrument_convergence_tracking WHERE converged = 0) AS escalated_count,
