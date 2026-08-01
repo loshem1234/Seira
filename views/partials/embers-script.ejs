@@ -1,0 +1,21 @@
+<script>
+(function () {
+    var container = document.querySelector('.embers');
+    if (!container) return;
+    var count = window.matchMedia('(max-width: 600px)').matches ? 10 : 18;
+    for (var i = 0; i < count; i++) {
+        var ember = document.createElement('span');
+        ember.className = 'ember';
+        var left = Math.random() * 100;
+        var delay = Math.random() * 14;
+        var duration = 9 + Math.random() * 8;
+        var size = 2 + Math.random() * 3;
+        ember.style.left = left + 'vw';
+        ember.style.animationDelay = delay + 's';
+        ember.style.animationDuration = duration + 's';
+        ember.style.width = size + 'px';
+        ember.style.height = size + 'px';
+        container.appendChild(ember);
+    }
+})();
+</script>
