@@ -1,0 +1,22 @@
+<%- include('partials/header') %>
+
+<div class="seira-card">
+    <h2>Archive <span class="grade-badge">Article 38</span></h2>
+    <p style="color: var(--seira-text-dim);">
+        A read-only rendering of reversion events. Filter via <code>/api/archive/log?grade=&event_type=&cause_type=</code>.
+    </p>
+    <table class="seira-table">
+        <tr><th>When</th><th>Grade</th><th>Event</th><th>Cause</th><th>Outcome</th></tr>
+        <% events.forEach(e => { %>
+        <tr>
+            <td><%= e.created_at %></td>
+            <td><%= e.source_grade %> → <%= e.target_grade %></td>
+            <td><%= e.event_type %></td>
+            <td><%= e.cause_type %></td>
+            <td class="status-<%= e.outcome %>"><%= e.outcome %></td>
+        </tr>
+        <% }) %>
+    </table>
+</div>
+
+<%- include('partials/footer') %>

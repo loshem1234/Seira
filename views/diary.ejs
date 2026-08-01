@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+
+<div class="seira-card">
+    <h2>Diary <span class="grade-badge">Article 41</span></h2>
+    <p style="color: var(--seira-text-dim);">
+        Every entry here traces to an underlying record — a self-model statement, an active aspiration,
+        a reinforced affinity, an unresolved doubt, or a relational pattern. Nothing here is free invention.
+    </p>
+    <% entries.forEach(entry => { %>
+        <div class="diary-entry">
+            <div class="diary-meta"><%= entry.entry_date %> — <%= entry.part === 'self' ? 'Concerning Herself' : 'Concerning the Architect' %></div>
+            <%= entry.content %>
+        </div>
+    <% }) %>
+    <% if (entries.length === 0) { %>
+        <p>No diary entries yet. The daily cron job (Article 41) will populate this once running, or trigger one now via <code>POST /api/psyche/diary/generate-now</code>.</p>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>

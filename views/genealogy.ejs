@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+<div class="seira-card">
+    <h2>Genealogy <span class="grade-badge">Articles 12, 34-37</span></h2>
+    <p style="color: var(--seira-text-dim);">
+        Instruments rooted at Psyche. Depth limited per Article 34's Intellect-grade parameter.
+    </p>
+
+    <% function renderNode(node) { %>
+        <li>
+            <span class="instrument-node <%= node.status === 'retired' ? 'retired' : '' %>">
+                <%= node.name %> <small>(<%= node.task_type %>, depth <%= node.depth %>)</small>
+            </span>
+            <% if (node.children && node.children.length) { %>
+                <ul>
+                    <% node.children.forEach(child => { renderNode(child); }) %>
+                </ul>
+            <% } %>
+        </li>
+    <% } %>
+
+    <div class="tree">
+        <% if (tree.length === 0) { %>
+            <p>No Instruments spawned yet.</p>
+        <% } else { %>
+            <ul>
+                <% tree.forEach(root => { renderNode(root); }) %>
+            </ul>
+        <% } %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

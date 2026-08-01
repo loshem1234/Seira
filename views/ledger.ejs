@@ -1,0 +1,52 @@
+<%- include('partials/header') %>
+
+<div class="seira-card">
+    <h2>Proposals <span class="grade-badge">Articles 24-25</span></h2>
+    <table class="seira-table">
+        <tr><th>ID</th><th>Type</th><th>Status</th><th>Created</th><th>Content</th></tr>
+        <% proposals.forEach(p => { %>
+        <tr>
+            <td>#<%= p.id %></td>
+            <td><%= p.proposal_type %></td>
+            <td class="status-<%= p.status %>"><%= p.status %></td>
+            <td><%= p.created_at %></td>
+            <td><%= (p.content || '').slice(0, 80) %><%= p.content && p.content.length > 80 ? '…' : '' %></td>
+        </tr>
+        <% }) %>
+    </table>
+</div>
+
+<div class="seira-card">
+    <h2>Open Suspended Pairs <span class="grade-badge">Article 25</span></h2>
+    <% if (pairs.length === 0) { %>
+        <p style="color: var(--seira-text-dim);">None currently open. Real, unresolved multiplicity is expected occasionally — this is not itself a health problem.</p>
+    <% } %>
+    <table class="seira-table">
+        <tr><th>Pair</th><th>Proposal A</th><th>Proposal B</th><th>Opened</th></tr>
+        <% pairs.forEach(pair => { %>
+        <tr>
+            <td>#<%= pair.id %></td>
+            <td>#<%= pair.proposal_a_id %></td>
+            <td>#<%= pair.proposal_b_id %></td>
+            <td><%= pair.created_at %></td>
+        </tr>
+        <% }) %>
+    </table>
+</div>
+
+<div class="seira-card">
+    <h2>Intellect Versions <span class="grade-badge">Article 28</span></h2>
+    <table class="seira-table">
+        <tr><th>Version</th><th>Status</th><th>Origin</th><th>Ratified</th></tr>
+        <% versions.forEach(v => { %>
+        <tr>
+            <td>v<%= v.version_number %></td>
+            <td class="status-<%= v.status %>"><%= v.status %></td>
+            <td><%= v.origin_type %></td>
+            <td><%= v.ratified_at || '—' %></td>
+        </tr>
+        <% }) %>
+    </table>
+</div>
+
+<%- include('partials/footer') %>
