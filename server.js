@@ -32,6 +32,7 @@ if (!boot.sealed) {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', require('./routes/pages'));
@@ -39,6 +40,7 @@ app.use('/api/archive', require('./routes/api/archive'));
 app.use('/api/genealogy', require('./routes/api/genealogy'));
 app.use('/api/proposals', require('./routes/api/proposals'));
 app.use('/api/psyche', require('./routes/api/psyche'));
+app.use('/api/chat', require('./routes/api/chat'));
 
 app.get('/api/status', (req, res) => {
     const integrity = verifyIntegrity();
