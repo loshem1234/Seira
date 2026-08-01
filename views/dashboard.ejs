@@ -1,0 +1,64 @@
+<%- include('partials/header') %>
+
+<% if (!genesisComplete) { %>
+    <div class="banner-warning">
+        <strong>Seira has not yet been founded.</strong>
+        <a href="/genesis">Begin Genesis →</a>
+    </div>
+<% } %>
+
+<div class="seira-card">
+    <h2>Unity</h2>
+    <p><strong><%= unity.name %></strong></p>
+    <p style="color: var(--seira-text-dim); font-style: italic;"><%= unity.telos %></p>
+</div>
+
+<div class="seira-card">
+    <h2>Health <span class="grade-badge">Article 44</span></h2>
+    <div class="health-grid">
+        <div class="health-metric">
+            <span class="value"><%= health.converged_count ?? 0 %></span>
+            <span class="label">Converged Instruments</span>
+        </div>
+        <div class="health-metric">
+            <span class="value"><%= health.escalated_count ?? 0 %></span>
+            <span class="label">Escalated Instruments</span>
+        </div>
+        <div class="health-metric">
+            <span class="value"><%= health.dispensations_last_30d ?? 0 %></span>
+            <span class="label">Dispensations (30d)</span>
+        </div>
+        <div class="health-metric">
+            <span class="value"><%= health.open_suspended_count ?? 0 %></span>
+            <span class="label">Open Suspended Pairs</span>
+        </div>
+        <div class="health-metric">
+            <span class="value"><%= health.stale_proposal_count ?? 0 %></span>
+            <span class="label">Stale Proposals</span>
+        </div>
+    </div>
+</div>
+
+<div class="seira-card">
+    <h2>Intellect <span class="grade-badge">Grade 2</span></h2>
+    <% if (currentIntellect) { %>
+        <p>Current version: <strong>v<%= currentIntellect.version_number %></strong> (<%= currentIntellect.origin_type %>)</p>
+        <p style="color: var(--seira-text-dim); font-size: 0.9rem;">Ratified: <%= currentIntellect.ratified_at %></p>
+    <% } else { %>
+        <p>No Intellect version on record yet.</p>
+    <% } %>
+    <p><%= openProposals %> open proposal(s) awaiting resolution — see the <a href="/ledger">Ledger</a>.</p>
+</div>
+
+<div class="seira-card">
+    <h2>Recent Diary <span class="grade-badge">Article 41</span></h2>
+    <% recentDiary.forEach(entry => { %>
+        <div class="diary-entry">
+            <div class="diary-meta"><%= entry.entry_date %> — <%= entry.part %></div>
+            <%= entry.content %>
+        </div>
+    <% }) %>
+    <p><a href="/diary">Full diary →</a></p>
+</div>
+
+<%- include('partials/footer') %>
