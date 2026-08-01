@@ -39,5 +39,12 @@ app.get('/api/status', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Seira listening on port ${PORT}`);
-    registerAllJobs();
+    // If you've migrated any or all jobs to real Railway Cron Services
+    // (see cron/run-job.js and the README), set SEIRA_DISABLE_INPROCESS_CRON=true
+    // on the web service so the same job doesn't run twice.
+    if (process.env.SEIRA_DISABLE_INPROCESS_CRON === 'true') {
+        console.log('In-process cron disabled (SEIRA_DISABLE_INPROCESS_CRON=true) — expecting Railway Cron Services instead.');
+    } else {
+        registerAllJobs();
+    }
 });
