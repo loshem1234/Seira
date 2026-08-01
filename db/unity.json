@@ -9,5 +9,5 @@
 
   "genesis_date": "REPLACE AT GENESIS: ISO 8601 timestamp",
 
-  "content_hash": null
+  "content_hash": content_hash = 8b17fb5008340572b9a83ce06b37bdc09f3d06418dda478b5c628044832d5fdf
 }
