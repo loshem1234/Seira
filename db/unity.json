@@ -7,7 +7,7 @@
 
   "founding_architect": "Loshem",
 
-  "genesis_date": "REPLACE AT GENESIS: ISO 8601 timestamp",
+  "genesis_date": "2026-08-01T00:00:00Z",
 
-  "content_hash": 8b17fb5008340572b9a83ce06b37bdc09f3d06418dda478b5c628044832d5fdf
+  "content_hash": null
 }
