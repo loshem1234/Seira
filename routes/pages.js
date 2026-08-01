@@ -1,9 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
-const { loadUnity, isGenesisComplete } = require('../lib/unity');
+const { loadUnity, isSealed, isGenesisComplete, performGenesis } = require('../lib/unity');
 const { getHealthIndicators } = require('../lib/health');
 const instruments = require('../lib/instruments');
+
+router.get('/genesis', (req, res) => {
+    const unity = loadUnity();
+    if (isSealed(unity)) {
+        return res.redirect('/');
+    }
+    res.render('genesis', { page: 'genesis', error: null });
+});
+
+router.post('/genesis', (req, res) => {
+    const unity = loadUnity();
+    if (isSealed(unity)) {
+        return res.redirect('/');
+    }
+    const { name, telos, foundingArchitect } = req.body;
+    try {
+        performGenesis({ name, telos, foundingArchitect });
+        res.redirect('/');
+    } catch (err) {
+        res.render('genesis', { page: 'genesis', error: err.message });
+    }
+});
 
 router.get('/', (req, res) => {
     const unity = loadUnity();
@@ -17,6 +39,14 @@ router.get('/', (req, res) => {
         page: 'dashboard',
         unity, genesisComplete, health, currentIntellect, openProposals, recentDiary
     });
+});
+
+router.get('/chat', (req, res) => {
+    const unity = loadUnity();
+    if (!isGenesisComplete(unity)) {
+        return res.redirect('/genesis');
+    }
+    res.render('chat', { page: 'chat', seiraName: unity.name });
 });
 
 router.get('/archive', (req, res) => {
