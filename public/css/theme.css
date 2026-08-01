@@ -1,0 +1,178 @@
+/* Seira — Sanctum Sanctorum palette, violet variant.
+   Distinct from Arche's dark-gold house style: here the ground is a deep
+   violet rather than near-black, and gold is reserved for text/accents
+   rather than structure, so the two systems read as kin, not twins. */
+
+:root {
+    --seira-void: #14091f;
+    --seira-violet-deep: #1f0f30;
+    --seira-violet: #2c1745;
+    --seira-violet-light: #402060;
+    --seira-gold: #d8b657;
+    --seira-gold-bright: #f0d488;
+    --seira-gold-dim: #a68a45;
+    --seira-text: #e8dfc8;
+    --seira-text-dim: #b8ac93;
+    --seira-border: #4a2d6b;
+    --seira-danger: #b85c5c;
+    --seira-ok: #7fae6a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background: radial-gradient(ellipse at top, var(--seira-violet-deep), var(--seira-void) 70%);
+    color: var(--seira-text);
+    font-family: 'DejaVu Serif', Georgia, 'Times New Roman', serif;
+    margin: 0;
+    min-height: 100vh;
+}
+
+a { color: var(--seira-gold); text-decoration: none; }
+a:hover { color: var(--seira-gold-bright); text-decoration: underline; }
+
+header.seira-header {
+    background: linear-gradient(180deg, var(--seira-violet), var(--seira-violet-deep));
+    border-bottom: 1px solid var(--seira-border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+header.seira-header h1 {
+    font-family: 'DejaVu Serif', serif;
+    color: var(--seira-gold-bright);
+    letter-spacing: 0.08em;
+    font-size: 1.6rem;
+    margin: 0;
+    font-variant: small-caps;
+}
+
+nav.seira-nav {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.95rem;
+}
+
+nav.seira-nav a.active {
+    color: var(--seira-gold-bright);
+    border-bottom: 1px solid var(--seira-gold-bright);
+}
+
+main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.seira-card {
+    background: rgba(44, 23, 69, 0.55);
+    border: 1px solid var(--seira-border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.seira-card h2 {
+    color: var(--seira-gold);
+    font-size: 1.1rem;
+    margin-top: 0;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--seira-border);
+    padding-bottom: 0.5rem;
+}
+
+.grade-badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--seira-gold-dim);
+    color: var(--seira-gold-dim);
+    text-transform: uppercase;
+}
+
+.status-promoted, .status-current, .status-active, .status-converged { color: var(--seira-ok); }
+.status-rejected, .status-falsified, .status-escalated { color: var(--seira-danger); }
+.status-suspended, .status-stale, .status-pending { color: var(--seira-gold-dim); }
+
+table.seira-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+table.seira-table th, table.seira-table td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--seira-border);
+}
+table.seira-table th {
+    color: var(--seira-gold-dim);
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.health-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+}
+.health-metric {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(20, 9, 31, 0.5);
+    border-radius: 4px;
+    border: 1px solid var(--seira-border);
+}
+.health-metric .value {
+    font-size: 1.8rem;
+    color: var(--seira-gold-bright);
+    display: block;
+}
+.health-metric .label {
+    font-size: 0.75rem;
+    color: var(--seira-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.diary-entry {
+    border-left: 2px solid var(--seira-gold-dim);
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    line-height: 1.6;
+}
+.diary-entry .diary-meta {
+    font-style: normal;
+    font-size: 0.75rem;
+    color: var(--seira-text-dim);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.tree ul { list-style: none; padding-left: 1.25rem; border-left: 1px dotted var(--seira-border); }
+.tree > ul { border-left: none; padding-left: 0; }
+.tree li { margin: 0.35rem 0; }
+.instrument-node {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--seira-border);
+    border-radius: 4px;
+    background: rgba(64, 32, 96, 0.3);
+}
+.instrument-node.retired { opacity: 0.5; text-decoration: line-through; }
+
+.banner-warning {
+    background: rgba(184, 92, 92, 0.15);
+    border: 1px solid var(--seira-danger);
+    color: var(--seira-text);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
