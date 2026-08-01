@@ -5,9 +5,17 @@ const express = require('express');
 const path = require('path');
 const { verifyIntegrity } = require('./lib/unity');
 const { registerAllJobs } = require('./cron/cron');
+const { initializeDatabase } = require('./db/init');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Ensure the schema exists before anything else touches the database.
+// Safe to run on every boot: every CREATE statement in schema.sql is
+// IF NOT EXISTS, and Genesis seeding only happens once (guarded by a
+// row-count check). This means a fresh deploy with an empty database
+// self-initializes with no manual step required.
+initializeDatabase();
 
 // Article 32.3: check Unity integrity once at boot, before anything else.
 // A mismatch here halts the process rather than starting on an unverified
