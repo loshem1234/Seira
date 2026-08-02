@@ -354,6 +354,19 @@ CREATE TABLE IF NOT EXISTS archive_annotations (
     -- A correction to an annotation is a new annotation, not an UPDATE.
 );
 
+-- Weekly Accounting (mechanical, factual) and Weekly Pattern Review
+-- (narrative, drawn from relational_pattern_model / affinities).
+CREATE TABLE IF NOT EXISTS reviews (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    review_type   TEXT NOT NULL CHECK (review_type IN ('weekly_accounting', 'weekly_pattern_review')),
+    period_start  TEXT NOT NULL,
+    period_end    TEXT NOT NULL,
+    content       TEXT NOT NULL,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_reviews_type ON reviews(review_type, created_at);
+
 -- By-grade, by-event-type, by-cause view (Art. 38)
 CREATE VIEW IF NOT EXISTS archive_reversion_log AS
 SELECT
