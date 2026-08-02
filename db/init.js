@@ -1,18 +1,22 @@
 // db/init.js
 //
-// Applies the schema to whichever account's database is current in
-// lib/dbContext.js's context. In multi-tenant Seira, this is called
-// exactly once per account, automatically, at signup (see lib/auth.js) —
-// never run standalone, since it has no meaning without an account
-// context to apply the schema to. Safe to call more than once regardless:
-// every CREATE in schema.sql is IF NOT EXISTS, and the Genesis-parameter
-// seed is guarded by a row-count check.
+// Applies the schema to a given database instance. Takes the db instance
+// explicitly rather than resolving it through lib/db.js's context Proxy,
+// because lib/dbManager.js calls this the moment a connection is opened —
+// before any account context exists to resolve through. This also means
+// schema application happens automatically on EVERY connection open, not
+// just at signup, so adding a new table later (e.g. the conversations
+// table) reaches existing accounts automatically the next time their
+// connection is opened — no manual migration step, ever.
+//
+// Safe to call any number of times: every CREATE in schema.sql is
+// IF NOT EXISTS, and the Genesis-parameter seed below is guarded by a
+// row-count check.
 
 const fs = require('fs');
 const path = require('path');
 
-function initializeDatabase() {
-    const db = require('../lib/db');
+function initializeDatabase(db) {
     const schemaPath = path.join(__dirname, 'schema.sql');
     const schema = fs.readFileSync(schemaPath, 'utf8');
 
