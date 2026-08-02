@@ -6,15 +6,27 @@
         Every entry here traces to an underlying record — a self-model statement, an active aspiration,
         a reinforced affinity, an unresolved doubt, or a relational pattern. Nothing here is free invention.
     </p>
-    <% entries.forEach(entry => { %>
-        <div class="diary-entry">
-            <div class="diary-meta"><%= entry.entry_date %> — <%= entry.part === 'self' ? 'Concerning Herself' : 'Concerning the Architect' %></div>
-            <%= entry.content %>
-        </div>
-    <% }) %>
-    <% if (entries.length === 0) { %>
-        <p>No diary entries yet. The daily cron job (Article 41) will populate this once running, or trigger one now via <code>POST /api/psyche/diary/generate-now</code>.</p>
-    <% } %>
+
+    <div class="diary-tabs" id="diary-tabs">
+        <button type="button" class="diary-tab active" data-tab="self">Seira</button>
+        <button type="button" class="diary-tab" data-tab="architect">Architect</button>
+        <button type="button" class="diary-tab" data-tab="logs">Logs</button>
+    </div>
+
+    <div class="diary-panel" id="panel-self"></div>
+    <div class="diary-panel" id="panel-architect" style="display:none;"></div>
+
+    <div class="diary-panel" id="panel-logs" style="display:none;">
+        <h3 class="logs-subheading">Reflections (Digest)</h3>
+        <div id="logs-digest"></div>
+
+        <h3 class="logs-subheading">Autonomous Inquiries</h3>
+        <div id="logs-inquiries"></div>
+
+        <h3 class="logs-subheading">Weekly Reviews</h3>
+        <div id="logs-reviews"></div>
+    </div>
 </div>
 
+<script src="/js/diary.js"></script>
 <%- include('partials/footer') %>
