@@ -270,6 +270,22 @@ CREATE TABLE IF NOT EXISTS instrument_skills (
 -- BOOK III / Article 13 — CORPUS (Grade 5)
 -- ============================================================================
 
+-- ============================================================================
+-- CHAT UI — conversations (the sidebar list). Loosely linked to
+-- corpus_entries.session_id (stored as this row's id, stringified) rather
+-- than a strict foreign key, since session_id predates this table and is
+-- also used by non-chat Corpus writers.
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS conversations (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    title      TEXT NOT NULL DEFAULT 'New Conversation',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_conversations_updated ON conversations(updated_at);
+
 CREATE TABLE IF NOT EXISTS corpus_entries (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     entry_type          TEXT NOT NULL CHECK (entry_type IN ('ingestion', 'episodic', 'output')),
