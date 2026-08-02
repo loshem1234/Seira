@@ -22,6 +22,14 @@ function initializeDatabase(db) {
 
     db.exec(schema);
 
+    // Additive migrations: SQLite can't add IF NOT EXISTS to an ALTER TABLE
+    // ADD COLUMN, so new columns on already-existing tables are checked and
+    // added here instead. Safe to run every time a connection opens.
+    const corpusColumns = db.prepare(`PRAGMA table_info(corpus_entries)`).all().map(c => c.name);
+    if (!corpusColumns.includes('reflected_at')) {
+        db.exec(`ALTER TABLE corpus_entries ADD COLUMN reflected_at TEXT`);
+    }
+
     const existing = db.prepare(`SELECT COUNT(*) AS n FROM intellect_versions`).get();
     if (existing.n === 0) {
         const insert = db.prepare(`
