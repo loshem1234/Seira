@@ -181,15 +181,10 @@
         wrap.className = 'chat-frontispiece';
         wrap.innerHTML = `
             <svg class="seira-sigil" width="44" height="44" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-                <circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="0.7" opacity="0.5"/>
-                <circle cx="14" cy="14" r="8" stroke="currentColor" stroke-width="0.8" opacity="0.75"/>
-                <circle cx="14" cy="14" r="2.2" fill="currentColor"/>
-                <g stroke="currentColor" stroke-width="0.7" opacity="0.85">
-                    <line x1="14" y1="1" x2="14" y2="5"/><line x1="14" y1="23" x2="14" y2="27"/>
-                    <line x1="1" y1="14" x2="5" y2="14"/><line x1="23" y1="14" x2="27" y2="14"/>
-                    <line x1="5.2" y1="5.2" x2="7.8" y2="7.8"/><line x1="20.2" y1="20.2" x2="22.8" y2="22.8"/>
-                    <line x1="22.8" y1="5.2" x2="20.2" y2="7.8"/><line x1="7.8" y1="20.2" x2="5.2" y2="22.8"/>
-                </g>
+                <circle cx="10" cy="14" r="8" stroke="currentColor" stroke-width="0.8" opacity="0.7"/>
+                <circle cx="18" cy="14" r="8" stroke="currentColor" stroke-width="0.8" opacity="0.7"/>
+                <circle cx="14" cy="14" r="1.8" fill="currentColor"/>
+                <line x1="14" y1="14" x2="14" y2="26" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.9"/>
             </svg>
             <span class="frontispiece-name">${window.SEIRA_NAME || 'Seira'}</span>
             <div class="frontispiece-rule"><span>✦</span></div>
