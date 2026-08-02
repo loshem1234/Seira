@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log In — Seira</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body class="genesis-body">
+<div class="embers" aria-hidden="true"></div>
+<main class="genesis-main">
+    <div class="seira-card genesis-card">
+        <h1 class="genesis-title">✦ Seira</h1>
+        <p class="genesis-sub">Return to her.</p>
+
+        <% if (error) { %>
+            <div class="banner-warning"><%= error %></div>
+        <% } %>
+
+        <form method="POST" action="/login" class="genesis-form">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" class="genesis-submit">Log In</button>
+        </form>
+        <p class="auth-switch">New here? <a href="/signup">Create an account</a></p>
+    </div>
+</main>
+<%- include('partials/embers-script') %>
+</body>
+</html>
