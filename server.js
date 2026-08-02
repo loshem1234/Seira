@@ -3,42 +3,31 @@ require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
-const { verifyIntegrity, ensureUnityFileExists } = require('./lib/unity');
+const { verifyIntegrity } = require('./lib/unity');
 const { registerAllJobs } = require('./cron/cron');
-const { initializeDatabase } = require('./db/init');
+const { router: authRouter, requireAuth } = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// Seed Unity's file at SEIRA_UNITY_PATH from the repo template if nothing
-// exists there yet (first boot against a fresh volume). Does nothing, ever,
-// once a real Unity file is already present at that path.
-ensureUnityFileExists();
-
-// Ensure the schema exists before anything else touches the database.
-// Safe to run on every boot: every CREATE statement in schema.sql is
-// IF NOT EXISTS, and Genesis seeding only happens once (guarded by a
-// row-count check). This means a fresh deploy with an empty database
-// self-initializes with no manual step required.
-initializeDatabase();
-
-// Article 32.3: check Unity integrity once at boot, before anything else.
-// A mismatch here halts the process rather than starting on an unverified
-// foundation.
-const boot = verifyIntegrity();
-if (!boot.ok) {
-    console.error(boot.reason);
-    process.exit(1);
-}
-if (!boot.sealed) {
-    console.warn('Unity is not yet sealed. Edit db/unity.json and run `node db/seal-unity.js` to complete Genesis.');
-}
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Public routes — no account context needed yet.
+app.use('/', authRouter);
+
+// Everything below this line requires a logged-in account, and runs
+// inside that account's own db + Unity context (see routes/auth.js's
+// requireAuth). This is what makes every other route, unmodified,
+// automatically operate on the correct account's isolated Seira.
+app.use(requireAuth);
+app.use((req, res, next) => {
+    res.locals.account = req.account;
+    next();
+});
 
 app.use('/', require('./routes/pages'));
 app.use('/api/archive', require('./routes/api/archive'));
@@ -49,7 +38,7 @@ app.use('/api/chat', require('./routes/api/chat'));
 
 app.get('/api/status', (req, res) => {
     const integrity = verifyIntegrity();
-    res.json({ ok: integrity.ok, sealed: integrity.sealed, genesisComplete: integrity.genesisComplete });
+    res.json({ ok: integrity.ok, sealed: integrity.sealed, genesisComplete: integrity.genesisComplete, account: req.account.email });
 });
 
 app.listen(PORT, () => {
