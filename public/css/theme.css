@@ -245,8 +245,8 @@ table.seira-table th {
 }
 .genesis-card { text-align: left; }
 .genesis-title {
-    font-variant: small-caps;
-    letter-spacing: 0.15em;
+    font-family: 'Cinzel Decorative', 'DejaVu Serif', serif;
+    letter-spacing: 0.08em;
     color: var(--seira-gold-bright);
     font-size: 2rem;
     margin: 0 0 0.5rem;
@@ -308,14 +308,29 @@ table.seira-table th {
     z-index: 20;
 }
 .seira-logo {
-    font-family: 'DejaVu Serif', serif;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
     color: var(--seira-gold-bright);
-    letter-spacing: 0.1em;
-    font-size: 1.35rem;
-    font-variant: small-caps;
-    text-shadow: 0 0 12px rgba(244, 217, 138, 0.25);
 }
 .seira-logo:hover { text-decoration: none; }
+.seira-logo-text {
+    font-family: 'Cinzel Decorative', 'DejaVu Serif', serif;
+    letter-spacing: 0.08em;
+    font-size: 1.25rem;
+    text-shadow: 0 0 12px rgba(244, 217, 138, 0.25);
+}
+.seira-sigil {
+    color: var(--seira-gold-bright);
+    filter: drop-shadow(0 0 2px rgba(244, 217, 138, 0.3));
+}
+@media (prefers-reduced-motion: no-preference) {
+    .seira-sigil { animation: sigil-pulse 3.2s ease-in-out infinite; }
+}
+@keyframes sigil-pulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(244, 217, 138, 0.3)); }
+    50%      { transform: scale(1.08); filter: drop-shadow(0 0 8px rgba(244, 217, 138, 0.75)); }
+}
 .topbar-right { display: flex; align-items: center; gap: 0.9rem; }
 
 .menu-dropdown { position: relative; }
@@ -367,7 +382,13 @@ table.seira-table th {
 .menu-logout-form { margin: 0; }
 
 /* ===================== Chat app shell ===================== */
-.chat-body { overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+.chat-body {
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh; /* modern mobile browsers: accounts for browser chrome/gesture bar, ignored where unsupported */
+    display: flex;
+    flex-direction: column;
+}
 .chat-app {
     display: flex;
     flex: 1;
@@ -464,6 +485,7 @@ table.seira-table th {
     flex-direction: column;
     min-width: 0;
     padding: 1.25rem 2rem;
+    padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
 }
 
 .chat-log {
@@ -551,16 +573,20 @@ table.seira-table th {
     border-radius: 10px;
     padding: 0.5rem 0.6rem;
 }
-.chat-input-bar input[type="text"] {
+.chat-input-bar textarea {
     flex: 1;
     background: none;
     border: none;
     color: var(--seira-text);
     font-family: inherit;
     font-size: 1rem;
-    padding: 0.4rem;
+    padding: 0.5rem 0.4rem;
+    resize: none;
+    overflow-y: auto;
+    max-height: 200px;
+    line-height: 1.45;
 }
-.chat-input-bar input[type="text"]:focus { outline: none; }
+.chat-input-bar textarea:focus { outline: none; }
 
 .icon-button {
     background: none;
@@ -633,6 +659,50 @@ table.seira-table th {
     .chat-sidebar { position: absolute; z-index: 15; height: 100%; }
     .chat-sidebar.collapsed { margin-left: -260px; }
     .chat-sidebar:not(.collapsed) { margin-left: 0; }
+}
+
+/* Decorative frontispiece — shown above an empty conversation only */
+.chat-frontispiece {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    margin: auto;
+}
+.chat-frontispiece .seira-sigil {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 1rem;
+}
+.chat-frontispiece .frontispiece-name {
+    font-family: 'Cinzel Decorative', 'DejaVu Serif', serif;
+    font-size: 1.6rem;
+    color: var(--seira-gold-bright);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 16px rgba(244, 217, 138, 0.3);
+    display: block;
+    margin-bottom: 0.6rem;
+}
+.frontispiece-rule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 0.75rem auto;
+    max-width: 220px;
+}
+.frontispiece-rule::before, .frontispiece-rule::after {
+    content: '';
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, transparent, var(--seira-gold-dim), transparent);
+}
+.frontispiece-rule span { color: var(--seira-gold-dim); font-size: 0.9rem; }
+.chat-frontispiece .frontispiece-telos {
+    color: var(--seira-text-dim);
+    font-style: italic;
+    max-width: 420px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-size: 0.95rem;
 }
 
 
