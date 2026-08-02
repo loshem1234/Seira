@@ -3,12 +3,17 @@ require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
-const { verifyIntegrity } = require('./lib/unity');
+const { verifyIntegrity, ensureUnityFileExists } = require('./lib/unity');
 const { registerAllJobs } = require('./cron/cron');
 const { initializeDatabase } = require('./db/init');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Seed Unity's file at SEIRA_UNITY_PATH from the repo template if nothing
+// exists there yet (first boot against a fresh volume). Does nothing, ever,
+// once a real Unity file is already present at that path.
+ensureUnityFileExists();
 
 // Ensure the schema exists before anything else touches the database.
 // Safe to run on every boot: every CREATE statement in schema.sql is
