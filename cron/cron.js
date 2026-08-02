@@ -19,6 +19,9 @@ const { verifyIntegrity } = require('../lib/unity');
 const { pruneExpiredEntries, stampPruningEligibility } = require('../lib/corpusRetention');
 const { generateDailyEntries } = require('../lib/diary');
 const { runSelfAudit } = require('../lib/health');
+const { runDigest } = require('../lib/reflection');
+const { runWeeklyAccounting, runWeeklyPatternReview } = require('../lib/weeklyReview');
+const { runAutonomousInquiry } = require('../lib/autonomousInquiry');
 const db = require('../lib/db');
 const { forEachAccount } = require('../lib/forEachAccount');
 
@@ -96,6 +99,64 @@ function registerAllJobs() {
                 log('health-snapshot', account.email, JSON.stringify(health));
             } catch (err) {
                 console.error(`[cron:health-snapshot] [${account.email}] error:`, err);
+            }
+        });
+    });
+
+    // Article 7 — the Digest: the actual Corpus -> Psyche consolidation
+    // step. Without this, conversations only ever accumulate as raw
+    // Corpus entries and nothing durable (self-model, affinities,
+    // relational patterns) ever forms from them. Runs every 3 hours,
+    // matching Arche's cadence, per account.
+    cron.schedule('0 */3 * * *', async () => {
+        await forEachAccount(async (account) => {
+            try {
+                const result = await runDigest();
+                log('digest', account.email, `Processed ${result.processed} Corpus entries, wrote ${result.written} Psyche record(s).`);
+            } catch (err) {
+                console.error(`[cron:digest] [${account.email}] error:`, err);
+            }
+        });
+    });
+
+    // Daily Autonomous Inquiry — Seira researches something driven by her
+    // own current aspiration or affinity, not by the Architect's request.
+    cron.schedule('0 6 * * *', async () => {
+        await forEachAccount(async (account) => {
+            try {
+                const result = await runAutonomousInquiry();
+                if (result.ran) {
+                    log('autonomous-inquiry', account.email, `Researched (${result.topic.source}): "${result.topic.text}"`);
+                } else {
+                    log('autonomous-inquiry', account.email, result.reason);
+                }
+            } catch (err) {
+                console.error(`[cron:autonomous-inquiry] [${account.email}] error:`, err);
+            }
+        });
+    });
+
+    // Weekly Accounting — mechanical, factual tally. Sunday 06:00.
+    cron.schedule('0 6 * * 0', async () => {
+        await forEachAccount(async (account) => {
+            try {
+                const counts = runWeeklyAccounting();
+                log('weekly-accounting', account.email, JSON.stringify(counts));
+            } catch (err) {
+                console.error(`[cron:weekly-accounting] [${account.email}] error:`, err);
+            }
+        });
+    });
+
+    // Weekly Pattern Review — narrative synthesis of relational patterns
+    // and affinities, plus mechanical pruning of stale patterns. Sunday 07:00.
+    cron.schedule('0 7 * * 0', async () => {
+        await forEachAccount(async (account) => {
+            try {
+                const result = await runWeeklyPatternReview();
+                log('weekly-pattern-review', account.email, `${result.patternCount} pattern(s), ${result.affinityCount} affinit(y/ies), pruned ${result.pruned}.`);
+            } catch (err) {
+                console.error(`[cron:weekly-pattern-review] [${account.email}] error:`, err);
             }
         });
     });
