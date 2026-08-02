@@ -242,24 +242,62 @@
         el.modelSelect.innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join('');
     });
 
+    function showAttachedIndicator(name) {
+        el.attachedIndicator.style.display = 'flex';
+        el.attachedIndicator.innerHTML = `<span>${name}</span>`;
+        const clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.textContent = '×';
+        clearBtn.addEventListener('click', () => {
+            attachedText = null; attachedName = null;
+            el.attachedIndicator.style.display = 'none';
+            el.fileInput.value = '';
+        });
+        el.attachedIndicator.appendChild(clearBtn);
+    }
+
+    function showProcessingIndicator(name) {
+        el.attachedIndicator.style.display = 'flex';
+        el.attachedIndicator.innerHTML = `<span>Processing ${name}…</span>`;
+    }
+
     el.fileInput.addEventListener('change', () => {
         const file = el.fileInput.files[0];
         if (!file) return;
+
+        const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+
+        if (isPdf) {
+            showProcessingIndicator(file.name);
+            const reader = new FileReader();
+            reader.onload = async () => {
+                const base64 = reader.result.split(',')[1]; // strip the data: URL prefix
+                try {
+                    const res = await fetch('/api/chat/extract-pdf', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fileBase64: base64 })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'Extraction failed');
+                    attachedText = data.text;
+                    attachedName = file.name + ` (${data.pages} page${data.pages === 1 ? '' : 's'})`;
+                    showAttachedIndicator(attachedName);
+                } catch (err) {
+                    el.attachedIndicator.style.display = 'none';
+                    alert('Could not read that PDF: ' + err.message);
+                    el.fileInput.value = '';
+                }
+            };
+            reader.readAsDataURL(file);
+            return;
+        }
+
         const reader = new FileReader();
         reader.onload = () => {
             attachedText = reader.result;
             attachedName = file.name;
-            el.attachedIndicator.style.display = 'flex';
-            el.attachedIndicator.innerHTML = `<span>${attachedName}</span>`;
-            const clearBtn = document.createElement('button');
-            clearBtn.type = 'button';
-            clearBtn.textContent = '×';
-            clearBtn.addEventListener('click', () => {
-                attachedText = null; attachedName = null;
-                el.attachedIndicator.style.display = 'none';
-                el.fileInput.value = '';
-            });
-            el.attachedIndicator.appendChild(clearBtn);
+            showAttachedIndicator(attachedName);
         };
         reader.readAsText(file);
     });
