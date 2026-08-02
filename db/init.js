@@ -1,13 +1,12 @@
 // db/init.js
 //
-// Safe to run any number of times, from anywhere: the schema itself is
-// written with CREATE TABLE/VIEW/INDEX IF NOT EXISTS, and the Genesis seed
-// below is guarded by a row-count check. This means server.js can call
-// initializeDatabase() automatically on every boot without ever needing
-// a separate manual step or Start Command toggle.
-//
-// You can still run this standalone if you want to:
-//     npm run init-db
+// Applies the schema to whichever account's database is current in
+// lib/dbContext.js's context. In multi-tenant Seira, this is called
+// exactly once per account, automatically, at signup (see lib/auth.js) —
+// never run standalone, since it has no meaning without an account
+// context to apply the schema to. Safe to call more than once regardless:
+// every CREATE in schema.sql is IF NOT EXISTS, and the Genesis-parameter
+// seed is guarded by a row-count check.
 
 const fs = require('fs');
 const path = require('path');
@@ -50,19 +49,6 @@ function initializeDatabase() {
     }
 
     return { schemaApplied: true, genesisSeeded: false };
-}
-
-// Allow standalone use: `npm run init-db` / `node db/init.js`
-if (require.main === module) {
-    console.log('Initializing Seira schema...');
-    const result = initializeDatabase();
-    console.log('Schema applied.');
-    if (result.genesisSeeded) {
-        console.log('Seeded Genesis intellect_versions row (v1) and initial doctrinal parameters.');
-    } else {
-        console.log('intellect_versions already populated; skipping Genesis seed.');
-    }
-    console.log('Done.');
 }
 
 module.exports = { initializeDatabase };
