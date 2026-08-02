@@ -164,10 +164,38 @@
         el.chatLog.innerHTML = '';
         const res = await fetch('/api/chat/' + sessionId + '/history');
         const rows = await res.json();
+
+        if (rows.length === 0) {
+            renderFrontispiece();
+            return;
+        }
+
         rows.forEach((r, i) => {
             const isLastSeira = r.entry_type === 'output' && i === rows.length - 1;
             append(r.entry_type === 'ingestion' ? 'user' : 'seira', r.content, { withActions: isLastSeira || r.entry_type === 'output' });
         });
+    }
+
+    function renderFrontispiece() {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-frontispiece';
+        wrap.innerHTML = `
+            <svg class="seira-sigil" width="44" height="44" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                <circle cx="14" cy="14" r="12" stroke="currentColor" stroke-width="0.7" opacity="0.5"/>
+                <circle cx="14" cy="14" r="8" stroke="currentColor" stroke-width="0.8" opacity="0.75"/>
+                <circle cx="14" cy="14" r="2.2" fill="currentColor"/>
+                <g stroke="currentColor" stroke-width="0.7" opacity="0.85">
+                    <line x1="14" y1="1" x2="14" y2="5"/><line x1="14" y1="23" x2="14" y2="27"/>
+                    <line x1="1" y1="14" x2="5" y2="14"/><line x1="23" y1="14" x2="27" y2="14"/>
+                    <line x1="5.2" y1="5.2" x2="7.8" y2="7.8"/><line x1="20.2" y1="20.2" x2="22.8" y2="22.8"/>
+                    <line x1="22.8" y1="5.2" x2="20.2" y2="7.8"/><line x1="7.8" y1="20.2" x2="5.2" y2="22.8"/>
+                </g>
+            </svg>
+            <span class="frontispiece-name">${window.SEIRA_NAME || 'Seira'}</span>
+            <div class="frontispiece-rule"><span>✦</span></div>
+            <p class="frontispiece-telos">${window.SEIRA_TELOS || ''}</p>
+        `;
+        el.chatLog.appendChild(wrap);
     }
 
     // --- Message actions ---
@@ -273,6 +301,20 @@
         el.micBtn.title = 'Voice input not supported in this browser';
     }
 
+    // --- Auto-growing input ---
+
+    function autoResizeInput() {
+        el.chatInput.style.height = 'auto';
+        el.chatInput.style.height = Math.min(el.chatInput.scrollHeight, 200) + 'px';
+    }
+    el.chatInput.addEventListener('input', autoResizeInput);
+    el.chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            el.chatForm.requestSubmit();
+        }
+    });
+
     // --- Sending ---
 
     el.chatForm.addEventListener('submit', async (e) => {
@@ -280,8 +322,12 @@
         const message = el.chatInput.value.trim();
         if (!message || !activeConversationId) return;
 
+        const frontispiece = el.chatLog.querySelector('.chat-frontispiece');
+        if (frontispiece) frontispiece.remove();
+
         append('user', message);
         el.chatInput.value = '';
+        autoResizeInput();
         el.chatInput.disabled = true;
         el.sendBtn.disabled = true;
 
