@@ -82,6 +82,20 @@ router.get('/reviews', (req, res) => {
     res.json(db.prepare(sql).all(...params));
 });
 
+router.get('/digest-runs', (req, res) => {
+    res.json(db.prepare(`SELECT * FROM digest_runs ORDER BY created_at DESC LIMIT 50`).all());
+});
+
+router.get('/autonomous-inquiries', (req, res) => {
+    res.json(db.prepare(`
+        SELECT ce.id, ce.content, ce.trace_of_derivation, ce.created_at
+        FROM corpus_entries ce
+        JOIN instruments i ON i.id = ce.instrument_id
+        WHERE i.task_type = 'autonomous_inquiry'
+        ORDER BY ce.created_at DESC LIMIT 50
+    `).all());
+});
+
 router.get('/relational-patterns', (req, res) => {
     res.json(db.prepare(`SELECT * FROM relational_pattern_model ORDER BY confidence DESC`).all());
 });
