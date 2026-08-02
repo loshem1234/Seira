@@ -209,6 +209,56 @@ table.seira-table th {
     letter-spacing: 0.04em;
 }
 
+.diary-tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--seira-border);
+    margin: 1rem 0 1.25rem;
+}
+.diary-tab {
+    background: none;
+    border: none;
+    color: var(--seira-text-dim);
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.9rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+}
+.diary-tab:hover { color: var(--seira-gold); }
+.diary-tab.active { color: var(--seira-gold-bright); border-bottom-color: var(--seira-gold-bright); }
+
+.empty-note { color: var(--seira-text-dim); font-style: italic; }
+
+.logs-subheading {
+    color: var(--seira-gold-dim);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 1.5rem 0 0.75rem;
+    border-bottom: 1px solid var(--seira-border);
+    padding-bottom: 0.4rem;
+}
+.logs-subheading:first-child { margin-top: 0; }
+
+.log-entry {
+    border-left: 2px solid var(--seira-border);
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+.log-json {
+    background: rgba(10, 4, 20, 0.5);
+    border: 1px solid var(--seira-border);
+    border-radius: 4px;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--seira-text-dim);
+    white-space: pre-wrap;
+    overflow-x: auto;
+    font-family: 'DejaVu Sans Mono', monospace;
+}
+
 .tree ul { list-style: none; padding-left: 1.25rem; border-left: 1px dotted var(--seira-border); }
 .tree > ul { border-left: none; padding-left: 0; }
 .tree li { margin: 0.35rem 0; }
@@ -245,7 +295,7 @@ table.seira-table th {
 }
 .genesis-card { text-align: left; }
 .genesis-title {
-    font-family: 'Cinzel Decorative', 'DejaVu Serif', serif;
+    font-family: 'IM Fell English SC', 'DejaVu Serif', serif;
     letter-spacing: 0.08em;
     color: var(--seira-gold-bright);
     font-size: 2rem;
@@ -315,9 +365,9 @@ table.seira-table th {
 }
 .seira-logo:hover { text-decoration: none; }
 .seira-logo-text {
-    font-family: 'Cinzel Decorative', 'DejaVu Serif', serif;
-    letter-spacing: 0.08em;
-    font-size: 1.25rem;
+    font-family: 'IM Fell English SC', 'DejaVu Serif', serif;
+    letter-spacing: 0.04em;
+    font-size: 1.55rem;
     text-shadow: 0 0 12px rgba(244, 217, 138, 0.25);
 }
 .seira-sigil {
@@ -673,10 +723,10 @@ table.seira-table th {
     margin-bottom: 1rem;
 }
 .chat-frontispiece .frontispiece-name {
-    font-family: 'Cinzel Decorative', 'DejaVu Serif', serif;
-    font-size: 1.6rem;
+    font-family: 'IM Fell English SC', 'DejaVu Serif', serif;
+    font-size: 2rem;
     color: var(--seira-gold-bright);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     text-shadow: 0 0 16px rgba(244, 217, 138, 0.3);
     display: block;
     margin-bottom: 0.6rem;
