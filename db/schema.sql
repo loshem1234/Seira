@@ -367,6 +367,20 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 CREATE INDEX IF NOT EXISTS idx_reviews_type ON reviews(review_type, created_at);
 
+-- Every Digest cycle logs its outcome here, including deferred/failed runs,
+-- so the raw extraction can actually be reviewed rather than only its
+-- side-effects (the Psyche rows it wrote).
+CREATE TABLE IF NOT EXISTS digest_runs (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    processed_count  INTEGER NOT NULL,
+    written_count    INTEGER NOT NULL,
+    deferred_count    INTEGER NOT NULL DEFAULT 0,
+    extraction_json  TEXT, -- null when deferred (nothing was extracted)
+    created_at       TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_digest_runs_created ON digest_runs(created_at);
+
 -- By-grade, by-event-type, by-cause view (Art. 38)
 CREATE VIEW IF NOT EXISTS archive_reversion_log AS
 SELECT
