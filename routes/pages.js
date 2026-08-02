@@ -27,7 +27,17 @@ router.post('/genesis', (req, res) => {
     }
 });
 
+// Chat is now the home page.
 router.get('/', (req, res) => {
+    const unity = loadUnity();
+    if (!isGenesisComplete(unity)) {
+        return res.redirect('/genesis');
+    }
+    res.render('chat', { page: 'chat', seiraName: unity.name });
+});
+
+// The old dashboard, now reached via the menu rather than being home.
+router.get('/dashboard', (req, res) => {
     const unity = loadUnity();
     const genesisComplete = isGenesisComplete(unity);
     const health = getHealthIndicators();
@@ -39,14 +49,6 @@ router.get('/', (req, res) => {
         page: 'dashboard',
         unity, genesisComplete, health, currentIntellect, openProposals, recentDiary
     });
-});
-
-router.get('/chat', (req, res) => {
-    const unity = loadUnity();
-    if (!isGenesisComplete(unity)) {
-        return res.redirect('/genesis');
-    }
-    res.render('chat', { page: 'chat', seiraName: unity.name });
 });
 
 router.get('/archive', (req, res) => {
