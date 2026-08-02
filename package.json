@@ -5,7 +5,6 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "init-db": "node db/init.js",
     "dev": "node server.js"
   },
   "dependencies": {
