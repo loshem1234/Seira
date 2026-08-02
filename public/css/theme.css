@@ -350,3 +350,29 @@ table.seira-table th {
     cursor: pointer;
 }
 .chat-form button:hover { filter: brightness(1.1); }
+
+/* Account / logout in nav */
+.account-email {
+    color: var(--seira-text-dim);
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+}
+.logout-form { display: inline; margin: 0; }
+.logout-button {
+    background: none;
+    border: 1px solid var(--seira-border);
+    color: var(--seira-text-dim);
+    border-radius: 4px;
+    padding: 0.2rem 0.7rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+.logout-button:hover { color: var(--seira-gold-bright); border-color: var(--seira-gold-dim); }
+
+.auth-switch {
+    text-align: center;
+    margin-top: 1.25rem;
+    color: var(--seira-text-dim);
+    font-size: 0.9rem;
+}
