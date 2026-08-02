@@ -36,6 +36,56 @@ router.post('/self-audit/run-now', (req, res) => {
     res.json({ flagged: runSelfAudit() });
 });
 
+// --- Digest, autonomous inquiry, weekly reviews (manual trigger + read) ---
+router.post('/digest/run-now', async (req, res) => {
+    try {
+        const { runDigest } = require('../../lib/reflection');
+        res.json(await runDigest());
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.post('/autonomous-inquiry/run-now', async (req, res) => {
+    try {
+        const { runAutonomousInquiry } = require('../../lib/autonomousInquiry');
+        res.json(await runAutonomousInquiry());
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.post('/weekly-accounting/run-now', (req, res) => {
+    try {
+        const { runWeeklyAccounting } = require('../../lib/weeklyReview');
+        res.json(runWeeklyAccounting());
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.post('/weekly-pattern-review/run-now', async (req, res) => {
+    try {
+        const { runWeeklyPatternReview } = require('../../lib/weeklyReview');
+        res.json(await runWeeklyPatternReview());
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/reviews', (req, res) => {
+    const { review_type } = req.query;
+    let sql = `SELECT * FROM reviews WHERE 1=1`;
+    const params = [];
+    if (review_type) { sql += ` AND review_type = ?`; params.push(review_type); }
+    sql += ` ORDER BY created_at DESC LIMIT 50`;
+    res.json(db.prepare(sql).all(...params));
+});
+
+router.get('/relational-patterns', (req, res) => {
+    res.json(db.prepare(`SELECT * FROM relational_pattern_model ORDER BY confidence DESC`).all());
+});
+
 // --- Dispensation (Article 31) ---
 router.get('/dispensation/conditions', (req, res) => {
     res.json(getTriggerConditions());
