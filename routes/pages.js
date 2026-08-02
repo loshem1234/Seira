@@ -62,8 +62,7 @@ router.get('/genealogy', (req, res) => {
 });
 
 router.get('/diary', (req, res) => {
-    const entries = db.prepare(`SELECT * FROM diary_entries ORDER BY entry_date DESC, part ASC LIMIT 60`).all();
-    res.render('diary', { page: 'diary', entries });
+    res.render('diary', { page: 'diary' });
 });
 
 router.get('/ledger', (req, res) => {
