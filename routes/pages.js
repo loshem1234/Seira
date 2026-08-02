@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
     if (!isGenesisComplete(unity)) {
         return res.redirect('/genesis');
     }
-    res.render('chat', { page: 'chat', seiraName: unity.name });
+    res.render('chat', { page: 'chat', seiraName: unity.name, seiraTelos: unity.telos });
 });
 
 // The old dashboard, now reached via the menu rather than being home.
