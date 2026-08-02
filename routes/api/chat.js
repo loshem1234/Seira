@@ -1,6 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const chat = require('../../lib/chat');
+const pdfParse = require('pdf-parse');
+
+// --- Document extraction (Article: Instrument executing, not originating -
+// this is pure mechanical extraction, no interpretation) ---
+
+router.post('/extract-pdf', async (req, res) => {
+    const { fileBase64 } = req.body;
+    if (!fileBase64) return res.status(400).json({ error: 'fileBase64 is required' });
+    try {
+        const buffer = Buffer.from(fileBase64, 'base64');
+        const data = await pdfParse(buffer);
+        res.json({ text: data.text, pages: data.numpages });
+    } catch (err) {
+        res.status(400).json({ error: 'Could not extract text from that PDF: ' + err.message });
+    }
+});
 
 // --- Conversations (sidebar) ---
 
